@@ -1,6 +1,7 @@
 #!/usr/bin/env zsh
 
 # Unified Claude launcher with model selection
+# Creates a fake `security` executable to bypass Keychain and use config.json instead
 
 declare -A MODELS
 declare -A BASE_URLS
@@ -10,17 +11,17 @@ declare -A CONFIG_DIRS
 # Model configurations
 MODELS[1]="glm-4.6"
 BASE_URLS[1]="https://api.z.ai/api/anthropic"
-AUTH_TOKENS[1]="your-glm-api-key"
+AUTH_TOKENS[1]="your-api-key"
 CONFIG_DIRS[1]="${HOME}/.glm"
 
 MODELS[2]="kimi-k2-thinking"
 BASE_URLS[2]="https://api.kimi.com/coding"
-AUTH_TOKENS[2]="your-kimi-api-key"
+AUTH_TOKENS[2]="your-api-key"
 CONFIG_DIRS[2]="${HOME}/.kimi"
 
 MODELS[3]="kimi-k2-thinking (alt)"
 BASE_URLS[3]="https://api.kimi.com/coding"
-AUTH_TOKENS[3]="your-kimi-alt-api-key"
+AUTH_TOKENS[3]="your-api-key"
 CONFIG_DIRS[3]="${HOME}/.kimi2"
 
 MODELS[4]="qwen3-coder-plus"
@@ -33,6 +34,11 @@ BASE_URLS[5]="http://localhost:8317"
 AUTH_TOKENS[5]="factory-api-key"
 CONFIG_DIRS[5]="${HOME}/.gemini-claude"
 
+MODELS[6]="gpt-5.2"
+BASE_URLS[6]="http://localhost:8317"
+AUTH_TOKENS[6]="factory-api-key"
+CONFIG_DIRS[6]="${HOME}/.claude-codex"
+
 show_menu() {
     echo ""
     echo "   ____  _                 _        ____       _           _   "
@@ -40,7 +46,6 @@ show_menu() {
     echo " | |    | |/ _\` | | | |/ _\` |/ _ \ \\___ \\ / _ \\ |/ _ \\/ __| __|"
     echo " | |___ | | (_| | |_| | (_| |  __/  ___) |  __/ |  __/ (__| |_ "
     echo "  \\____||_|\\__,_|\\__,_|\\__,_|\\___| |____/ \\___|_|\\___|\\___|\\__|"
-    echo "                                                      from Bessi"
     echo ""
     echo "  Select a model:"
     echo ""
@@ -49,12 +54,13 @@ show_menu() {
     echo "  3) Kimi K2 Thinking (alt key)"
     echo "  4) Qwen3 Coder Plus"
     echo "  5) Gemini 3 Pro Preview"
+    echo "  6) Claudex"
     echo ""
-    echo -n "Enter choice [1-5]: "
+    echo -n "Enter choice [1-6]: "
 }
 
 # Check for command line argument first
-if [[ -n "$1" && "$1" =~ ^[1-5]$ ]]; then
+if [[ -n "$1" && "$1" =~ ^[1-6]$ ]]; then
     choice=$1
     shift
 else
@@ -62,7 +68,7 @@ else
     read choice
 fi
 
-if [[ ! "$choice" =~ ^[1-5]$ ]]; then
+if [[ ! "$choice" =~ ^[1-6]$ ]]; then
     echo "Invalid selection. Exiting."
     exit 1
 fi
